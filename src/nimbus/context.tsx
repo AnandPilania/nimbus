@@ -12,11 +12,12 @@ export interface ObjectMeta { apiName: string; label: string; fields: FieldMeta[
 
 /** Everything a bundle needs to know about where and for whom it runs. Provide your own via <NimbusProvider>. */
 export interface NimbusEnv {
-  tenant: string
+  /** Optional. Leave unset for a single-tenant app: no `x-tenant` header is sent and the server uses its "default" tenant. */
+  tenant?: string
   user: { id: string; name: string; permissions: string[] }
   api: {
     baseUrl: string
-    /** Extra headers on every request (e.g. Authorization). `x-tenant` is always sent. */
+    /** Extra headers on every request (e.g. Authorization). `x-tenant` is sent only when `env.tenant` is set. */
     headers?: () => Record<string, string>
     /** Where object/field metadata is served: GET {metaPath}/{object} -> ObjectMeta */
     metaPath?: string
@@ -24,7 +25,6 @@ export interface NimbusEnv {
 }
 
 export const defaultEnv: NimbusEnv = {
-  tenant: 'default',
   user: { id: 'u1', name: 'Demo user', permissions: ['*'] },
   api: { baseUrl: '', metaPath: '/api/meta/objects' },
 }
@@ -33,7 +33,7 @@ export const NimbusProvider = NimbusContext.Provider
 export const useNimbus = () => useContext(NimbusContext)
 export const can = (env: NimbusEnv, perm?: string) => !perm || env.user.permissions.includes('*') || env.user.permissions.includes(perm)
 
-export const apiHeaders = (env: NimbusEnv): Record<string, string> => ({ 'x-tenant': env.tenant, ...env.api.headers?.() })
+export const apiHeaders = (env: NimbusEnv): Record<string, string> => ({ ...(env.tenant ? { 'x-tenant': env.tenant } : {}), ...env.api.headers?.() })
 export const apiUrl = (env: NimbusEnv, url: string) => (/^https?:/.test(url) ? url : env.api.baseUrl + url)
 
 /** JSON-first fetch. Throws an Error with `.status` and `.body` (the server's JSON error, e.g. { message, errors }). */

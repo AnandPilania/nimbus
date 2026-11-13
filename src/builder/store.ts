@@ -11,7 +11,7 @@ export const restStore = (env: NimbusEnv) => ({
 })
 
 /** Offline cache so work survives a dead server or a reload before the first save lands. */
-const key = (tenant: string) => `nimbus.bundles.v2.${tenant}`
+const key = (tenant: string) => `nimbus.bundles.v2.${tenant || 'default'}`
 export const localCache = {
     read(tenant: string): Bundles | null {
         try { const v = JSON.parse(localStorage.getItem(key(tenant)) || ''); return Object.keys(v).length ? v : null } catch { return null }

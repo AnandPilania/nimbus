@@ -10,13 +10,13 @@ The test needs an `Account` object with the demo data (the ports ship a seeder).
 
 ## Requests
 
-- `x-tenant: <tenant>` on every request, matching `^[\w-]{1,64}$` (default `default`). Anything else: **400**. Tenants never see each other's data.
+- `x-tenant: <tenant>` is optional; when sent it must match `^[\w-]{1,64}$`, when absent the tenant is `default` (single-tenant setups never need it). Anything else: **400**. Tenants never see each other's data.
 - `Authorization: Bearer <jwt>` when the server has a secret. JSON bodies are `application/json`.
 - Errors are always JSON: `{ "message": "..." }`, and for validation `{ "message": "Validation failed", "errors": { "field": "text" } }` (**422**).
 
 ## Tokens (HS256)
 
-Claims: `sub`, `tenant` (a tenant, or `*` for any), `permissions` (array) and/or `scope` (space separated), `exp` (seconds).
+Claims: `sub`, `tenant` (a tenant, `*` for any, or omitted = `default`), `permissions` (array) and/or `scope` (space separated), `exp` (seconds).
 `*` in permissions grants everything. Reject with **401**: missing or malformed token, bad signature, `alg` other than HS256 (including `none`), expired.
 Reject with **403**: token tenant differs from `x-tenant`, or the permission is missing.
 

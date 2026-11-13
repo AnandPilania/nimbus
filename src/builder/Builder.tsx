@@ -110,10 +110,10 @@ function Inspector({ n, b, bundles, edit, ops }: {
 
 function ContextPanel({ env, setEnv, token, setToken }: { env: { tenant: string; perms: string }; setEnv: (e: { tenant: string; perms: string }) => void; token: string; setToken: (t: string) => void }) {
   const [tenant, setTenant] = useState(env.tenant)
-  const commit = () => { const t = tenant.trim(); if (/^[\w-]{1,64}$/.test(t) && t !== env.tenant) setEnv({ ...env, tenant: t }); else setTenant(env.tenant) }
+  const commit = () => { const t = tenant.trim(); if ((t === '' || /^[\w-]{1,64}$/.test(t)) && t !== env.tenant) setEnv({ ...env, tenant: t }); else setTenant(env.tenant) }
   return (
     <div className="grid gap-3">
-      <Field label="Tenant (sent as x-tenant; bundles are stored per tenant)">
+      <Field label="Tenant (optional; empty = single tenant, otherwise sent as x-tenant)">
         <Input value={tenant} onChange={(e) => setTenant(e.target.value)} onBlur={commit} onKeyDown={(e) => e.key === 'Enter' && commit()} />
       </Field>
       <Field label="User permissions (comma separated, * for all)">
@@ -141,7 +141,7 @@ export function Builder() {
   const [mode, setMode] = useState<'design' | 'preview'>('design')
   const [width, setWidth] = useState('100%')
   const [panel, setPanel] = useState<'props' | 'logic' | 'json' | 'context'>('props')
-  const [ctx, setCtx] = useState({ tenant: 'default', perms: '*' })
+  const [ctx, setCtx] = useState({ tenant: '', perms: '*' })
   const [status, setStatus] = useState<keyof typeof STATUS>('loading')
   const [ready, setReady] = useState(false)
   // the token lives in sessionStorage only (gone when the tab closes); storage can be unavailable (privacy modes), so never let it throw
@@ -155,8 +155,8 @@ export function Builder() {
 
   const b = bundles[cur] ?? Object.values(bundles)[0]
   const hit = sel ? find(b.template, sel) : null
-  const env = useMemo<NimbusEnv>(() => ({ ...defaultEnv, tenant: ctx.tenant, api: { ...defaultEnv.api, headers }, user: { ...defaultEnv.user, permissions: ctx.perms.split(',').map((s) => s.trim()).filter(Boolean) } }), [ctx, headers])
-  const store = useMemo(() => restStore({ ...defaultEnv, tenant: ctx.tenant, api: { ...defaultEnv.api, headers } }), [ctx.tenant, headers])
+  const env = useMemo<NimbusEnv>(() => ({ ...defaultEnv, tenant: ctx.tenant || undefined, api: { ...defaultEnv.api, headers }, user: { ...defaultEnv.user, permissions: ctx.perms.split(',').map((s) => s.trim()).filter(Boolean) } }), [ctx, headers])
+  const store = useMemo(() => restStore({ ...defaultEnv, tenant: ctx.tenant || undefined, api: { ...defaultEnv.api, headers } }), [ctx.tenant, headers])
 
   useEffect(() => { if (!bundles[cur]) setCur(Object.keys(bundles)[0]) }, [bundles, cur])
 

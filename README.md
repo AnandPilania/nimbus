@@ -76,7 +76,7 @@ Raw body by default (`x-filename` header), `multipart: true` for form uploads. `
 ## Tenants, permissions, metadata
 
 Wrap your app in `<NimbusProvider value={env}>` (`tenant`, `user.permissions`, `api.baseUrl`, `api.headers`, `api.metaPath`).
-Every request carries `x-tenant`. A node's `perm` hides it without the permission (`*` grants all); Studio's design mode shows everything,
+Tenancy is optional: leave `tenant` unset and no `x-tenant` header is sent (the server uses its `default` tenant; tokens need no `tenant` claim). Set `NIMBUS_SINGLE_TENANT=1` on the reference server to ignore the header entirely. Set it for multi-tenant setups and every request carries `x-tenant`. A node's `perm` hides it without the permission (`*` grants all); Studio's design mode shows everything,
 Preview applies permissions using the Context tab. `RecordForm` and `DataTable object="Account"` read field metadata
 (`GET {metaPath}/{object}` -> `{ apiName, label, fields: [{ apiName, label, type, required, options, maxLength }] }`) so fields,
 types, picklists and required rules follow the tenant's schema.

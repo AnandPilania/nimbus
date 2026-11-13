@@ -1,0 +1,214 @@
+{
+  "apiName": "customerDirectory",
+  "label": "Customer directory",
+  "props": [],
+  "state": {
+    "selected": [],
+    "refresh": 0,
+    "viewing": null
+  },
+  "data": {},
+  "handlers": {
+    "pick": [
+      {
+        "type": "set",
+        "key": "selected",
+        "value": "{!$event.rows}"
+      }
+    ],
+    "rowAction": [
+      {
+        "type": "if",
+        "cond": "$event.action == \"delete\"",
+        "then": "remove",
+        "else": "view"
+      }
+    ],
+    "view": [
+      {
+        "type": "set",
+        "key": "viewing",
+        "value": "{!$event.row}"
+      }
+    ],
+    "closeView": [
+      {
+        "type": "set",
+        "key": "viewing",
+        "value": null
+      }
+    ],
+    "remove": [
+      {
+        "type": "fetch",
+        "url": "/api/records/Account/{!$event.row.id}",
+        "method": "DELETE",
+        "then": "removed"
+      }
+    ],
+    "removed": [
+      {
+        "type": "set",
+        "key": "refresh",
+        "value": "{!state.refresh + 1}"
+      },
+      {
+        "type": "toast",
+        "message": "Account deleted",
+        "variant": "success"
+      }
+    ]
+  },
+  "template": {
+    "id": "root",
+    "type": "Stack",
+    "props": {
+      "gap": 4
+    },
+    "children": [
+      {
+        "id": "h",
+        "type": "Heading",
+        "props": {
+          "text": "Customers",
+          "level": "1"
+        }
+      },
+      {
+        "id": "sub",
+        "type": "Text",
+        "props": {
+          "text": "Server-side search, filters, sorting and paging. Rows are fetched from /api/records/Account.",
+          "muted": true
+        }
+      },
+      {
+        "id": "sel",
+        "type": "Alert",
+        "props": {
+          "variant": "info",
+          "title": "{!len(state.selected)} selected",
+          "text": "{!join(pluck(state.selected, \"name\"))}"
+        },
+        "if": "len(state.selected) > 0"
+      },
+      {
+        "id": "tbl",
+        "type": "DataTable",
+        "props": {
+          "url": "/api/records/Account",
+          "version": "{!state.refresh}",
+          "pageSize": 10,
+          "selectable": true,
+          "exportable": true,
+          "columns": [
+            {
+              "key": "name",
+              "label": "Account",
+              "sortable": true,
+              "filter": "text"
+            },
+            {
+              "key": "industry",
+              "label": "Industry",
+              "type": "badge",
+              "sortable": true,
+              "filter": {
+                "type": "select",
+                "options": [
+                  "Manufacturing",
+                  "Energy",
+                  "Software",
+                  "Biotech",
+                  "Retail",
+                  "Finance"
+                ]
+              }
+            },
+            {
+              "key": "revenue",
+              "label": "Revenue",
+              "type": "currency",
+              "sortable": true,
+              "align": "right"
+            },
+            {
+              "key": "employees",
+              "label": "Employees",
+              "type": "number",
+              "sortable": true,
+              "align": "right"
+            },
+            {
+              "key": "active",
+              "label": "Active",
+              "type": "boolean"
+            },
+            {
+              "key": "created",
+              "label": "Created",
+              "type": "date",
+              "sortable": true
+            }
+          ],
+          "actions": [
+            {
+              "name": "view",
+              "label": "View"
+            },
+            {
+              "name": "delete",
+              "label": "Delete",
+              "variant": "ghost",
+              "confirm": "Delete this account?",
+              "perm": "accounts.delete"
+            }
+          ]
+        },
+        "on": {
+          "select": "pick",
+          "rowAction": "rowAction"
+        }
+      },
+      {
+        "id": "dlg",
+        "type": "Modal",
+        "props": {
+          "open": "{!state.viewing != null}",
+          "title": "{!state.viewing.name}",
+          "description": "Account details"
+        },
+        "on": {
+          "close": "closeView"
+        },
+        "children": [
+          {
+            "id": "d1",
+            "type": "Badge",
+            "props": {
+              "text": "{!state.viewing.industry}"
+            }
+          },
+          {
+            "id": "d2",
+            "type": "Text",
+            "props": {
+              "text": "Employees: {!state.viewing.employees}   Website: {!state.viewing.website}"
+            }
+          },
+          {
+            "id": "d3",
+            "type": "Button",
+            "props": {
+              "label": "Close",
+              "variant": "outline"
+            },
+            "on": {
+              "click": "closeView"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

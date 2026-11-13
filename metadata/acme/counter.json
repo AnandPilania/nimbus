@@ -1,0 +1,93 @@
+{
+  "apiName": "counter",
+  "label": "Counter",
+  "props": [
+    {
+      "name": "step",
+      "type": "number",
+      "default": 1
+    }
+  ],
+  "state": {
+    "count": 0
+  },
+  "data": {},
+  "handlers": {
+    "inc": [
+      {
+        "type": "set",
+        "key": "count",
+        "value": "{!state.count + props.step}"
+      }
+    ],
+    "reset": [
+      {
+        "type": "set",
+        "key": "count",
+        "value": 0
+      },
+      {
+        "type": "toast",
+        "message": "Counter reset"
+      }
+    ]
+  },
+  "template": {
+    "id": "root",
+    "type": "Card",
+    "props": {
+      "title": "Counter",
+      "description": "State, handlers and conditionals",
+      "width": 320
+    },
+    "children": [
+      {
+        "id": "v",
+        "type": "Heading",
+        "props": {
+          "text": "{!state.count}",
+          "level": "2"
+        }
+      },
+      {
+        "id": "hot",
+        "type": "Badge",
+        "props": {
+          "text": "On fire",
+          "variant": "destructive"
+        },
+        "if": "state.count >= 5"
+      },
+      {
+        "id": "row",
+        "type": "Stack",
+        "props": {
+          "direction": "row"
+        },
+        "children": [
+          {
+            "id": "b1",
+            "type": "Button",
+            "props": {
+              "label": "Add {!props.step}"
+            },
+            "on": {
+              "click": "inc"
+            }
+          },
+          {
+            "id": "b2",
+            "type": "Button",
+            "props": {
+              "label": "Reset",
+              "variant": "ghost"
+            },
+            "on": {
+              "click": "reset"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

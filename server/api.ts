@@ -103,7 +103,7 @@ function queryRecords(meta: ObjectMeta, rows: Rec[], sp: URLSearchParams) {
 }
 
 async function handle(req: IncomingMessage, res: ServerResponse, url: URL) {
-    const tenant = String(req.headers['x-tenant'] || 'default')
+    const tenant = process.env.NIMBUS_SINGLE_TENANT ? 'default' : String(req.headers['x-tenant'] || 'default')
     if (!TENANT.test(tenant)) return send(res, 400, { message: 'Invalid tenant' })
     const m = req.method!
     const p = url.pathname

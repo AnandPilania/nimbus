@@ -1,0 +1,71 @@
+{
+  "apiName": "objectDemo",
+  "label": "Object-driven UI",
+  "props": [],
+  "state": {},
+  "data": {},
+  "handlers": {
+    "created": [
+      {
+        "type": "toast",
+        "message": "Would create {!$event.values.name}",
+        "variant": "success"
+      }
+    ]
+  },
+  "template": {
+    "id": "root",
+    "type": "Stack",
+    "props": {
+      "gap": 4
+    },
+    "children": [
+      {
+        "id": "h",
+        "type": "Heading",
+        "props": {
+          "text": "Generated from object metadata",
+          "level": "1"
+        }
+      },
+      {
+        "id": "sub",
+        "type": "Text",
+        "props": {
+          "text": "Fields, types, picklists and required rules come from GET /api/meta/objects/Account.",
+          "muted": true
+        }
+      },
+      {
+        "id": "tabs",
+        "type": "Tabs",
+        "props": {
+          "tabs": "Record form,List view"
+        },
+        "children": [
+          {
+            "id": "f",
+            "type": "RecordForm",
+            "props": {
+              "object": "Account",
+              "columns": 2,
+              "submitLabel": "Create account"
+            },
+            "on": {
+              "submit": "created"
+            }
+          },
+          {
+            "id": "t",
+            "type": "DataTable",
+            "props": {
+              "object": "Account",
+              "url": "/api/records/Account",
+              "pageSize": 10
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

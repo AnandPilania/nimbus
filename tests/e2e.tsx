@@ -183,7 +183,7 @@ await settle(); await wait(900)
 const saved2 = JSON.parse(fs.readFileSync('metadata/default/customerDirectory.json', 'utf8'))
 ok('studio: visual handler editor adds handler + action', saved2.handlers.ping?.[0]?.type === 'toast', JSON.stringify(saved2.handlers.ping))
 await click(btn(el, 'Context')); await wait(50)
-const tenantInput = [...el.querySelectorAll('input')].find((i: any) => i.value === 'default') as any
+const tenantInput = [...el.querySelectorAll('input')].find((i: any) => i.closest('label, div')?.textContent?.includes('Tenant') && i.type !== 'password') as any
 setVal(tenantInput, 'acme'); await act(async () => { tenantInput.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Enter', bubbles: true })) }); await settle(); await wait(900)
 ok('studio: switching tenant loads and seeds that tenant separately', meta('acme').length === 6 && meta('default').length === 6, `${meta('acme').length}/${meta('default').length}`)
 const dflt = JSON.parse(fs.readFileSync('metadata/default/customerDirectory.json', 'utf8'))
