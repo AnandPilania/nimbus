@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./cover.png" alt="Nimbus">
+</p>
+
 # Nimbus
 
 A metadata-driven UI framework for React 19 (Tailwind 4, shadcn/ui, Vite), in the spirit of Lightning Web Components / Aura.
