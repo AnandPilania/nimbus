@@ -1,0 +1,344 @@
+{
+  "apiName": "signupForm",
+  "label": "Sign-up form",
+  "props": [],
+  "state": {
+    "form": {
+      "name": "",
+      "email": "",
+      "password": "",
+      "confirm": "",
+      "country": "",
+      "manager": "",
+      "interests": [],
+      "plan": "free",
+      "newsletter": true,
+      "terms": false,
+      "avatar": []
+    },
+    "saving": false,
+    "done": false,
+    "serverErrors": {}
+  },
+  "data": {},
+  "handlers": {
+    "setField": [
+      {
+        "type": "set",
+        "key": "form.{!$event.name}",
+        "value": "{!$event.value}"
+      },
+      {
+        "type": "set",
+        "key": "serverErrors.{!$event.name}",
+        "value": ""
+      }
+    ],
+    "submit": [
+      {
+        "type": "set",
+        "key": "serverErrors",
+        "value": {}
+      },
+      {
+        "type": "fetch",
+        "url": "/api/demo/signup",
+        "method": "POST",
+        "body": "{!$event.values}",
+        "loading": "saving",
+        "then": "saved",
+        "catch": "failed"
+      }
+    ],
+    "invalid": [
+      {
+        "type": "toast",
+        "message": "Please fix the highlighted fields",
+        "variant": "error"
+      }
+    ],
+    "saved": [
+      {
+        "type": "set",
+        "key": "done",
+        "value": true
+      },
+      {
+        "type": "toast",
+        "message": "Account created for {!state.form.name}",
+        "variant": "success"
+      }
+    ],
+    "failed": [
+      {
+        "type": "set",
+        "key": "serverErrors",
+        "value": "{!$event.errors}"
+      },
+      {
+        "type": "toast",
+        "message": "{!$event.message}",
+        "variant": "error"
+      }
+    ],
+    "again": [
+      {
+        "type": "set",
+        "key": "done",
+        "value": false
+      }
+    ]
+  },
+  "template": {
+    "id": "root",
+    "type": "Card",
+    "props": {
+      "title": "Create your account",
+      "description": "Validation, selects, autocomplete, file upload and progress",
+      "width": 640
+    },
+    "children": [
+      {
+        "id": "steps",
+        "type": "Steps",
+        "props": {
+          "steps": "Account,Preferences,Done",
+          "current": "{!state.done ? 2 : (len(state.form.password) >= 8 ? 1 : 0)}"
+        }
+      },
+      {
+        "id": "prog",
+        "type": "Progress",
+        "props": {
+          "label": "Form completion",
+          "showValue": true,
+          "value": "{!(len(state.form.name) > 1) * 25 + (len(state.form.email) > 3) * 25 + (len(state.form.password) >= 8) * 25 + (state.form.terms == true) * 25}"
+        },
+        "if": "!state.done"
+      },
+      {
+        "id": "ok",
+        "type": "Alert",
+        "props": {
+          "variant": "success",
+          "title": "You are all set",
+          "text": "Welcome, {!state.form.name}."
+        },
+        "if": "state.done"
+      },
+      {
+        "id": "again",
+        "type": "Button",
+        "props": {
+          "label": "Start over",
+          "variant": "outline"
+        },
+        "if": "state.done",
+        "on": {
+          "click": "again"
+        }
+      },
+      {
+        "id": "form",
+        "type": "Form",
+        "props": {},
+        "if": "!state.done",
+        "on": {
+          "submit": "submit",
+          "invalid": "invalid"
+        },
+        "children": [
+          {
+            "id": "g1",
+            "type": "Grid",
+            "props": {
+              "columns": 2,
+              "gap": 4
+            },
+            "children": [
+              {
+                "id": "name",
+                "type": "Input",
+                "props": {
+                  "name": "name",
+                  "value": "{!state.form.name}",
+                  "label": "Full name",
+                  "required": true,
+                  "minLength": 2
+                },
+                "on": {
+                  "change": "setField"
+                }
+              },
+              {
+                "id": "email",
+                "type": "Input",
+                "props": {
+                  "name": "email",
+                  "value": "{!state.form.email}",
+                  "label": "Email",
+                  "type": "email",
+                  "required": true,
+                  "error": "{!state.serverErrors.email}",
+                  "help": "Try taken@example.com to see a server-side error"
+                },
+                "on": {
+                  "change": "setField"
+                }
+              },
+              {
+                "id": "pw",
+                "type": "Input",
+                "props": {
+                  "name": "password",
+                  "value": "{!state.form.password}",
+                  "label": "Password",
+                  "type": "password",
+                  "required": true,
+                  "minLength": 8
+                },
+                "on": {
+                  "change": "setField"
+                }
+              },
+              {
+                "id": "pw2",
+                "type": "Input",
+                "props": {
+                  "name": "confirm",
+                  "value": "{!state.form.confirm}",
+                  "label": "Confirm password",
+                  "type": "password",
+                  "required": true,
+                  "error": "{!state.form.confirm != state.form.password ? \"Passwords must match\" : \"\"}"
+                },
+                "on": {
+                  "change": "setField"
+                }
+              },
+              {
+                "id": "country",
+                "type": "Select",
+                "props": {
+                  "name": "country",
+                  "value": "{!state.form.country}",
+                  "label": "Country",
+                  "required": true,
+                  "options": "India, United States, Germany, Japan"
+                },
+                "on": {
+                  "change": "setField"
+                }
+              },
+              {
+                "id": "mgr",
+                "type": "Autocomplete",
+                "props": {
+                  "name": "manager",
+                  "value": "{!state.form.manager}",
+                  "label": "Parent account",
+                  "placeholder": "Search accounts...",
+                  "searchUrl": "/api/lookups/Account"
+                },
+                "on": {
+                  "change": "setField"
+                }
+              }
+            ]
+          },
+          {
+            "id": "int",
+            "type": "MultiSelect",
+            "props": {
+              "name": "interests",
+              "value": "{!state.form.interests}",
+              "label": "Interests",
+              "options": "Analytics, Automation, Integrations, Security, Billing",
+              "required": true
+            },
+            "on": {
+              "change": "setField"
+            }
+          },
+          {
+            "id": "plan",
+            "type": "RadioGroup",
+            "props": {
+              "name": "plan",
+              "value": "{!state.form.plan}",
+              "label": "Plan",
+              "options": [
+                {
+                  "value": "free",
+                  "label": "Free"
+                },
+                {
+                  "value": "pro",
+                  "label": "Pro"
+                },
+                {
+                  "value": "team",
+                  "label": "Team"
+                }
+              ],
+              "direction": "row"
+            },
+            "on": {
+              "change": "setField"
+            }
+          },
+          {
+            "id": "avatar",
+            "type": "FileUpload",
+            "props": {
+              "name": "avatar",
+              "value": "{!state.form.avatar}",
+              "label": "Profile picture",
+              "accept": "image/*",
+              "maxSize": 5,
+              "multiple": false,
+              "uploadUrl": "/api/files"
+            },
+            "on": {
+              "change": "setField"
+            }
+          },
+          {
+            "id": "news",
+            "type": "Switch",
+            "props": {
+              "name": "newsletter",
+              "value": "{!state.form.newsletter}",
+              "label": "Send me product updates"
+            },
+            "on": {
+              "change": "setField"
+            }
+          },
+          {
+            "id": "terms",
+            "type": "Checkbox",
+            "props": {
+              "name": "terms",
+              "value": "{!state.form.terms}",
+              "label": "I accept the terms",
+              "required": true
+            },
+            "on": {
+              "change": "setField"
+            }
+          },
+          {
+            "id": "go",
+            "type": "Button",
+            "props": {
+              "label": "Create account",
+              "submit": true,
+              "loading": "{!state.saving}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+    "name": "nimbus",
+    "version": "0.0.1",
+    "type": "module",
+    "author": {
+        "name": "Anand Pilania",
+        "email": "pilaniaanand@gmail.com",
+        "url": "https://github.com/anandpilania"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc --noEmit && vite build",
+        "preview": "vite preview",
+        "test": "tsx tests/smoke.tsx && tsx tests/e2e.tsx && tsx tests/contract.run.ts",
+        "test:smoke": "tsx tests/smoke.tsx",
+        "test:e2e": "tsx tests/e2e.tsx",
+        "test:contract": "tsx tests/contract.run.ts",
+        "token": "tsx scripts/token.ts"
+    },
+    "dependencies": {
+        "@fontsource-variable/geist": "^5.3.0",
+        "@fontsource-variable/geist-mono": "^5.3.0",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "lucide-react": "^1.71.0",
+        "react": "^19.3.1",
+        "react-dom": "^19.3.1",
+        "tailwind-merge": "^3.7.0"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.3.5",
+        "@types/node": "^26.6.6",
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
+        "@vitejs/plugin-react": "^6.3.0",
+        "jsdom": "^31.0.0",
+        "tailwindcss": "^4.3.5",
+        "tsx": "^4.23.15",
+        "typescript": "^7.0.2",
+        "vite": "^8.3.7"
+    }
+}

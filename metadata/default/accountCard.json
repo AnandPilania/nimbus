@@ -1,0 +1,62 @@
+{
+  "apiName": "accountCard",
+  "label": "Account Card",
+  "props": [
+    {
+      "name": "name",
+      "type": "string",
+      "default": "Acme"
+    },
+    {
+      "name": "industry",
+      "type": "string",
+      "default": "Technology"
+    },
+    {
+      "name": "revenue",
+      "type": "number",
+      "default": 0
+    }
+  ],
+  "state": {},
+  "data": {},
+  "handlers": {
+    "open": [
+      {
+        "type": "emit",
+        "event": "select",
+        "detail": "{!props.name}"
+      }
+    ]
+  },
+  "template": {
+    "id": "root",
+    "type": "Card",
+    "props": {
+      "title": "{!props.name}",
+      "description": "{!props.industry}",
+      "width": 260
+    },
+    "children": [
+      {
+        "id": "rev",
+        "type": "Text",
+        "props": {
+          "text": "Annual revenue: ${!props.revenue}M",
+          "muted": true
+        }
+      },
+      {
+        "id": "btn",
+        "type": "Button",
+        "props": {
+          "label": "Open",
+          "variant": "outline"
+        },
+        "on": {
+          "click": "open"
+        }
+      }
+    ]
+  }
+}

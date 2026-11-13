@@ -1,0 +1,38 @@
+{
+  "apiName": "testro",
+  "label": "testro",
+  "props": [],
+  "state": {},
+  "data": {},
+  "handlers": {},
+  "template": {
+    "id": "root",
+    "type": "Stack",
+    "props": {
+      "direction": "column",
+      "gap": 3,
+      "align": "stretch"
+    },
+    "children": [
+      {
+        "id": "ncx7ux",
+        "type": "Stack",
+        "props": {
+          "direction": "column",
+          "gap": 3,
+          "align": "stretch"
+        },
+        "children": [
+          {
+            "id": "n2fihp",
+            "type": "Card",
+            "props": {
+              "title": "Hello World"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}

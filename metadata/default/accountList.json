@@ -1,0 +1,115 @@
+{
+  "apiName": "accountList",
+  "label": "Account List",
+  "props": [],
+  "state": {
+    "query": "",
+    "selected": ""
+  },
+  "data": {
+    "accounts": {
+      "value": [
+        {
+          "name": "Acme Corp",
+          "industry": "Manufacturing",
+          "revenue": 120
+        },
+        {
+          "name": "Globex",
+          "industry": "Energy",
+          "revenue": 340
+        },
+        {
+          "name": "Initech",
+          "industry": "Software",
+          "revenue": 58
+        },
+        {
+          "name": "Umbrella",
+          "industry": "Biotech",
+          "revenue": 910
+        }
+      ]
+    }
+  },
+  "handlers": {
+    "search": [
+      {
+        "type": "set",
+        "key": "query",
+        "value": "{!$event.value}"
+      }
+    ],
+    "pick": [
+      {
+        "type": "set",
+        "key": "selected",
+        "value": "{!$event}"
+      }
+    ]
+  },
+  "template": {
+    "id": "root",
+    "type": "Stack",
+    "props": {
+      "gap": 4
+    },
+    "children": [
+      {
+        "id": "h",
+        "type": "Heading",
+        "props": {
+          "text": "Accounts",
+          "level": "1"
+        }
+      },
+      {
+        "id": "q",
+        "type": "Input",
+        "props": {
+          "placeholder": "Search accounts...",
+          "value": "{!state.query}"
+        },
+        "on": {
+          "change": "search"
+        }
+      },
+      {
+        "id": "sel",
+        "type": "Badge",
+        "props": {
+          "text": "Selected: {!state.selected}"
+        },
+        "if": "state.selected"
+      },
+      {
+        "id": "grid",
+        "type": "Stack",
+        "props": {
+          "direction": "row",
+          "wrap": true,
+          "gap": 4
+        },
+        "children": [
+          {
+            "id": "card",
+            "type": "accountCard",
+            "props": {
+              "name": "{!item.name}",
+              "industry": "{!item.industry}",
+              "revenue": "{!item.revenue}"
+            },
+            "each": {
+              "items": "data.accounts",
+              "as": "item"
+            },
+            "if": "item.name ~ state.query",
+            "on": {
+              "select": "pick"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
