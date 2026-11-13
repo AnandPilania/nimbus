@@ -5,10 +5,10 @@ import tailwindcss from '@tailwindcss/vite'
 import { nimbusApi } from './server/api.js'
 
 export default defineConfig({
-    plugins: [react(), tailwindcss(), nimbusApi()],
-    resolve: {
-        alias: {
-            '@': path.resolve(import.meta.dirname, 'src'),
-        },
+  plugins: [react(), tailwindcss(), nimbusApi()],
+  resolve: {
+    alias: {
+      '@': path.resolve(import.meta.dirname, 'src'),
     },
+  },
 })

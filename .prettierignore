@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+**/vendor/
+nimbus-laravel/storage/
+package-lock.json
+metadata/
