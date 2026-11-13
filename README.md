@@ -87,8 +87,7 @@ types, picklists and required rules follow the tenant's schema.
 
 ## Backend
 
-The frontend talks to a small REST contract (bundles, object metadata, records with server-side paging, lookups, files) with JWT + tenant
-authorization. It is specified in **CONTRACT.md** and implemented three times, all passing the same `tests/contract.mjs`:
+The frontend talks to a small REST contract (bundles, object metadata, records with server-side paging, lookups, files) with JWT + tenant authorization. It is specified in [CONTRACT.md](./CONTRACT.md) and implemented three times, all passing the same `tests/contract.mjs`:
 
 - `server/api.ts`: reference server inside Vite (in-memory demo data, bundles stored as `metadata/<tenant>/<apiName>.json`).
 - `nimbus-nest`: NestJS module (TypeORM).
