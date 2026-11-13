@@ -6,6 +6,9 @@ import { createServer } from 'vite'
 const BASE = 'http://localhost:5199'
 const server = await createServer({ server: { port: 5199, strictPort: true }, logLevel: 'silent' })
 await server.listen()
+// the reference API stores bundles under ./metadata of the cwd: run from a scratch dir so tests never touch (or depend on) the real ones
+const scratch = (await import('node:fs')).mkdtempSync((await import('node:path')).join((await import('node:os')).tmpdir(), 'nimbus-e2e-'))
+process.chdir(scratch)
 const dom = new JSDOM('<!doctype html><body></body>', { url: BASE, pretendToBeVisual: true })
 const w = dom.window as any
 for (const k of ['window', 'document', 'HTMLElement', 'HTMLInputElement', 'HTMLSelectElement', 'HTMLTextAreaElement', 'Node', 'MouseEvent', 'KeyboardEvent', 'Event', 'File', 'FormData', 'XMLHttpRequest', 'localStorage', 'sessionStorage', 'getComputedStyle', 'requestAnimationFrame'])
@@ -24,6 +27,7 @@ const { samples } = await import('@/bundles/samples')
 const { Builder } = await import('@/builder/Builder')
 import type { Bundle } from '@/nimbus/types'
 import fs from 'node:fs'
+import { tmpdir } from 'node:os'
 
 let fail = 0
 const ok = (name: string, cond: boolean, extra = '') => { if (!cond) fail++; console.log(cond ? 'PASS' : 'FAIL', name, extra) }
@@ -193,4 +197,5 @@ ok('studio: tenants are isolated (edit stays in default)', nodeCount(dflt.templa
 ok('no unexpected React/console errors', errors.length === 0, errors.slice(0, 3).join(' | '))
 console.log(fail ? `\n${fail} FAILED` : '\nall passed')
 await server.close()
+process.chdir(tmpdir()); fs.rmSync(scratch, { recursive: true, force: true })
 process.exit(fail ? 1 : 0)
